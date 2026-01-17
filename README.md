@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="resources/logo.png" width="128" alt="Spring HTTP Generator Logo">
+  <img src="resources/architecture.png" width="128" alt="Spring HTTP Generator Architecture">
 </p>
 
 # 🚀 Spring HTTP Generator (0.0.1 Beta)
