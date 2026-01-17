@@ -1,0 +1,11 @@
+src/**/*.test.ts
+src/**/*.spec.ts
+.vscode-test
+*.vsix
+coverage
+.DS_Store
+tsconfig.json
+jest.config.js
+.gitignore
+.git
+.vscode

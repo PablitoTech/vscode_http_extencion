@@ -1,0 +1,127 @@
+{
+  "name": "spring-http-generator",
+  "displayName": "Spring HTTP Generator",
+  "description": "Automatically generate .http files from Spring Boot REST controllers",
+  "version": "0.1.0",
+  "publisher": "your-publisher-name",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/spring-http-generator"
+  },
+  "categories": [
+    "Other",
+    "Snippets"
+  ],
+  "keywords": [
+    "spring",
+    "spring boot",
+    "rest",
+    "http",
+    "rest client",
+    "api testing"
+  ],
+  "activationEvents": [
+    "*",
+    "onLanguage:java"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "spring-http-generator.generateHttpFile",
+        "title": "Generate HTTP Request File"
+      },
+      {
+        "command": "spring-http-generator.generateHttpFromController",
+        "title": "Generate .http from Controller"
+      },
+      {
+        "command": "spring-http-generator.generateHttpFromMethod",
+        "title": "Generate HTTP Request from Method"
+      },
+      {
+        "command": "spring-http-generator.runDiagnostics",
+        "title": "Run Extension Diagnostics"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "when": "resourceLangId == java",
+          "command": "spring-http-generator.generateHttpFromController",
+          "group": "spring-http-generator"
+        }
+      ],
+      "editor/context": [
+        {
+          "when": "resourceLangId == java",
+          "command": "spring-http-generator.generateHttpFromController",
+          "group": "spring-http-generator@1"
+        },
+        {
+          "when": "resourceLangId == java && editorHasSelection",
+          "command": "spring-http-generator.generateHttpFromMethod",
+          "group": "spring-http-generator@2"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "spring-http-generator.generateHttpFile",
+          "when": "workspaceFolderCount > 0"
+        },
+        {
+          "command": "spring-http-generator.generateHttpFromController",
+          "when": "resourceLangId == java"
+        },
+        {
+          "command": "spring-http-generator.generateHttpFromMethod",
+          "when": "resourceLangId == java && editorHasSelection"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Spring HTTP Generator",
+      "properties": {
+        "spring-http-generator.baseUrl": {
+          "type": "string",
+          "default": "http://localhost:8080",
+          "description": "Base URL for generated HTTP requests"
+        },
+        "spring-http-generator.outputDirectory": {
+          "type": "string",
+          "default": "http-requests",
+          "description": "Directory where .http files will be generated"
+        },
+        "spring-http-generator.includeAuthHeader": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically include Authorization header when security annotations are detected"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile",
+    "test": "jest",
+    "package": "vsce package",
+    "lint": "eslint src --ext ts"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.11",
+    "@types/node": "^20.10.6",
+    "@types/vscode": "^1.85.0",
+    "@vscode/test-electron": "^2.3.8",
+    "esbuild": "^0.19.11",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1",
+    "typescript": "^5.3.3",
+    "vscode-test": "^1.6.1"
+  },
+  "dependencies": {}
+}
