@@ -57,14 +57,14 @@ Abre el archivo `package.json` y asegúrate de que el campo `"publisher"` coinci
 ```json
 {
   "name": "spring-http-generator",
-  "publisher": "TU-ID-DE-PUBLISHER",
+  "publisher": "PablitoTech",
   ...
 }
 ```
 
 ### 3. Iniciar sesión en la consola
 ```powershell
-vsce login TU-ID-DE-PUBLISHER
+vsce login PablitoTech
 ```
 Te pedirá el **Personal Access Token (PAT)** que creaste en la Etapa 1. Pégalo allí.
 
