@@ -1,9 +1,10 @@
 {
   "name": "spring-http-generator",
-  "displayName": "Spring HTTP Generator",
-  "description": "Automatically generate .http files from Spring Boot REST controllers",
-  "version": "0.1.0",
-  "publisher": "your-publisher-name",
+  "displayName": "Spring HTTP Generator (0.0.1 Beta)",
+  "description": "🚀 Generación automática de archivos .http para Spring Boot. Acelera tus pruebas de API con un solo click.",
+  "version": "0.0.1",
+  "publisher": "PablitoTech",
+  "icon": "resources/logo.png",
   "engines": {
     "vscode": "^1.85.0"
   },
@@ -32,19 +33,19 @@
     "commands": [
       {
         "command": "spring-http-generator.generateHttpFile",
-        "title": "Generate HTTP Request File"
+        "title": "Generar archivo HTTP (Todos los controladores)"
       },
       {
         "command": "spring-http-generator.generateHttpFromController",
-        "title": "Generate .http from Controller"
+        "title": "Generar archivo .http desde Controlador"
       },
       {
         "command": "spring-http-generator.generateHttpFromMethod",
-        "title": "Generate HTTP Request from Method"
+        "title": "Generar solicitud HTTP desde Método"
       },
       {
         "command": "spring-http-generator.runDiagnostics",
-        "title": "Run Extension Diagnostics"
+        "title": "Ejecutar diagnósticos de la extensión"
       }
     ],
     "menus": {
@@ -88,17 +89,17 @@
         "spring-http-generator.baseUrl": {
           "type": "string",
           "default": "http://localhost:8080",
-          "description": "Base URL for generated HTTP requests"
+          "description": "URL base para las solicitudes HTTP generadas."
         },
         "spring-http-generator.outputDirectory": {
           "type": "string",
           "default": "http-requests",
-          "description": "Directory where .http files will be generated"
+          "description": "Directorio donde se guardarán los archivos .http generados."
         },
         "spring-http-generator.includeAuthHeader": {
           "type": "boolean",
           "default": true,
-          "description": "Automatically include Authorization header when security annotations are detected"
+          "description": "Incluir automáticamente la cabecera 'Authorization' cuando se detecten anotaciones de seguridad."
         }
       }
     }

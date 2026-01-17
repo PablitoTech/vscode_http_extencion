@@ -1,76 +1,82 @@
-# Spring HTTP Generator 🚀
+<p align="center">
+  <img src="resources/logo.png" width="128" alt="Spring HTTP Generator Logo">
+</p>
 
-**La herramienta definitiva para automatizar tus pruebas de API en Spring Boot.**
+# 🚀 Spring HTTP Generator (0.0.1 Beta)
 
-`Spring HTTP Generator` es una extensión de Visual Studio Code diseñada para desarrolladores Java que utilizan Spring Boot. Su objetivo principal es **eliminar la fricción** entre el desarrollo del backend y las pruebas de API, generando automáticamente archivos `.http` listos para ser ejecutados con el [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client).
+**¡Bienvenidos a la nueva era de las pruebas de APIs en Spring Boot!**
 
----
-
-## 🌟 ¿Qué queremos lograr con este proyecto?
-
-El desarrollo moderno de APIs requiere herramientas de prueba que vivan junto al código. El objetivo de este proyecto es:
-
-1.  **Productividad Extrema**: Reducir el tiempo de creación manual de solicitudes HTTP de minutos a milisegundos.
-2.  **Sincronización Total**: Asegurar que las pruebas siempre reflejen la última firma de los controladores Java.
-3.  **Documentación Viva**: Proporcionar ejemplos reales de uso de la API generados directamente desde el código fuente y sus DTOs.
-4.  **Simplicidad**: Ofrecer una herramienta quirúrgica que haga una sola cosa y la haga excepcionalmente bien, sin necesidad de herramientas externas pesadas (como Postman o Insomnia) para pruebas rápidas.
+`Spring HTTP Generator` es una extensión diseñada quirúrgicamente por **PablitoTech** para desarrolladores que buscan velocidad y precisión. Transforma tus controladores de Java en archivos coleccionables de solicitudes HTTP en segundos.
 
 ---
 
-## ✨ Características Principales
+## 🔥 ¿Por qué usar Spring HTTP Generator?
 
--   🔍 **Detección Inteligente**: Escanea el espacio de trabajo en busca de controladores con `@RestController` o `@Controller`.
--   🎯 **Mapeo Robusto**: Soporta `@GetMapping`, `@PostMapping`, `@PutMapping`, `@DeleteMapping`, `@PatchMapping` y `@RequestMapping`.
--   🔐 **Seguridad Integrada**: Detecta automáticamente anotaciones de seguridad (`@Secured`, `@PreAuthorize`, etc.) e incluye cabeceras de `Authorization`.
--   📝 **Análisis de DTOs**: Extrae campos de clases Java (DTOs) para generar cuerpos JSON realistas y válidos.
--   🚀 **Control Granular**: Genera archivos para un controlador completo, un método individual o todos los controladores a la vez.
--   🩺 **Modo Diagnóstico**: Incluye herramientas internas para verificar que el entorno de VS Code está configurado correctamente.
+En el desarrollo moderno, cada segundo cuenta. Esta extensión nace para eliminar la tarea aburrida de escribir manualmente solicitudes en Postman o archivos .http. 
 
----
-
-## ⚙️ Configuración
-
-Personaliza el comportamiento de la extensión en los ajustes de VS Code:
-
-| Ajuste | Descripción | Valor por Defecto |
-| :--- | :--- | :--- |
-| `spring-http-generator.baseUrl` | URL base para las solicitudes generadas. | `http://localhost:8080` |
-| `spring-http-generator.outputDirectory` | Carpeta donde se guardarán los archivos `.http`. | `http-requests` |
-| `spring-http-generator.includeAuthHeader` | Incluir automáticamente cabeceras de autorización. | `true` |
+- **Detección Automática**: Encuentra tus controladores sin que muevas un dedo.
+- **Análisis de DTOs Profundo**: Genera objetos JSON reales basados en tus clases Java.
+- **Seguridad Nativa**: ¿Usas `@PreAuthorize` o `@Secured`? Nosotros también. Las cabeceras de autorización se añaden solas.
+- **Beta 0.0.1**: Estás usando la versión pionera, optimizada para rendimiento y simplicidad.
 
 ---
 
-## 🛠️ Cómo Utilizarla
+## 📖 Ejemplo de Uso
 
-1.  **Click Derecho**: En cualquier archivo Java de tipo Controller, verás la opción **"Generate .http from Controller"**.
-2.  **Paleta de Comandos**: Presiona `Ctrl+Shift+P` y busca **"Generate HTTP Request File"** para elegir entre todos los controladores del proyecto.
-3.  **Selección de Método**: Selecciona el nombre de un método específico, haz click derecho y elige **"Generate HTTP Request from Method"**.
+### 🕹️ Tu Controlador Java
+Imagina que tienes este controlador para gestionar productos:
+
+```java
+@RestController
+@RequestMapping("/api/v1/inventory")
+public class ProductRestController {
+
+    @PostMapping("/create")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ProductDTO> createProduct(@RequestBody ProductDTO product) {
+        return ResponseEntity.ok(product);
+    }
+
+    @GetMapping("/find/{sku}")
+    public ResponseEntity<ProductDTO> findBySku(@PathVariable String sku) {
+        return ResponseEntity.ok(new ProductDTO());
+    }
+}
+```
+
+### 📦 Tu DTO
+```java
+public class ProductDTO {
+    private String sku;
+    private String name;
+    private Double price;
+    private Integer stock;
+}
+```
+
+### ✨ Resultado Generado (.http)
+```http
+### ProductRestController
+# Generated from: src/main/java/com/example/inventory/ProductRestController.java
+
+# createProduct
+POST http://localhost:8080/api/v1/inventory/create
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "sku": "",
+  "name": "",
+  "price": 0.0,
+  "stock": 0
+}
+
+###
+
+# findBySku
+GET http://localhost:8080/api/v1/inventory/find/{{sku}}
+```
 
 ---
 
-## 📦 Instalación
-
-Para instalar la extensión manualmente desde el archivo `.vsix`:
-
-1.  Descarga el archivo `spring-http-generator-0.1.0.vsix`.
-2.  En VS Code, ve a la pestaña de Extensiones (`Ctrl+Shift+X`).
-3.  Haz click en el icono de los tres puntos (`...`) y selecciona **"Install from VSIX..."**.
-4.  Selecciona el archivo descargado y ¡listo!
-
----
-
-## 📝 Requisitos
-
--   **Visual Studio Code 1.85.0** o superior.
--   Proyecto con **Spring Boot**.
--   (Recomendado) Extensión **REST Client** de Huachao Mao para ejecutar los archivos generados.
-
----
-
-## 📄 Licencia
-
-Este proyecto se distribuye bajo la **Licencia MIT**. Esto significa que puedes usarlo, distribuirlo, modificarlo e incluso venderlo con total libertad. El autor no se hace responsable de problemas derivados del uso por parte de terceros.
-
----
-
-**Desarrollado con ❤️ para agilizar el flujo de trabajo de desarrolladores Spring Boot.**
+**Made with ❤️ for PablitoTech**

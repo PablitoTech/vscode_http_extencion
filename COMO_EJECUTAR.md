@@ -30,7 +30,7 @@ Si ya confirmaste que funciona:
 .\scripts\package.ps1
 
 # 2. Instalar
-code --install-extension spring-http-generator-0.1.0.vsix --force
+code --install-extension spring-http-generator-0.0.1.vsix --force
 ```
 
 ---
@@ -46,4 +46,4 @@ code --install-extension spring-http-generator-0.1.0.vsix --force
    - Pestaña **Console**.
 
 ---
-© 2025 Antigravity - Herramientas de Desarrollo
+© 2026 PablitoTech - Herramientas de Desarrollo
