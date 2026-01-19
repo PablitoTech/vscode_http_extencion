@@ -59,10 +59,11 @@ Write-Host ""
 
 # Package extension
 Write-Host "Packaging extension..." -ForegroundColor Yellow
-vsce package
+if (!(Test-Path "dist")) { New-Item -ItemType Directory -Force "dist" }
+npx vsce package --out "dist/"
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "Packaging failed" -ForegroundColor Red
-    exit 1
+    Write-Error "Packaging failed"
+    exit $LASTEXITCODE
 }
 
 Write-Host ""
