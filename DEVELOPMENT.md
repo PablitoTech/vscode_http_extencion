@@ -12,7 +12,20 @@ Esta guía explica cómo configurar el entorno, compilar y empaquetar la extensi
 
 ---
 
-## 🚀 Configuración del Entorno
+## � Estructura del Proyecto
+
+Entender cómo está organizado el código te ayudará a ubicarte rápidamente:
+
+- `.vscode/`: Configuraciones de desarrollo para el propio proyecto.
+- `src/`: **Código fuente** principal de la extensión.
+- `test/`: Archivos de prueba (Unitarias e Integración).
+- `scripts/`: Scripts de utilidad (como `package.ps1`).
+- `out/`: Código compilado (generado por `npm run compile`).
+- `dist/`: Paquetes `.vsix` generados (generado por `vsce package`).
+
+---
+
+## �🚀 Configuración del Entorno
 
 1. **Clonar el repositorio**:
    ```bash
@@ -44,6 +57,26 @@ Si estás haciendo cambios constantes, puedes dejar la compilación en modo auto
 ```bash
 npm run watch
 ```
+
+---
+
+## 🧹 Calidad de Código y Pruebas
+
+Para mantener el código limpio y libre de errores, utilizamos herramientas estándar.
+
+### Linting (Análisis Estático)
+Usamos **ESLint** para asegurar buenas prácticas y estilo consistente. Ejecuta:
+```bash
+npm run lint
+```
+*Tip: Si hay errores corregibles automáticamente, ESLint te avisará.*
+
+### Pruebas Unitarias
+El proyecto utiliza **Jest** para las pruebas automáticas. Es importante ejecutar las pruebas antes de enviar cambios.
+```bash
+npm test
+```
+*Esto compilará el proyecto primero (`pretest`) y luego ejecutará todos los casos de prueba definidos.*
 
 ---
 
