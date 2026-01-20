@@ -47,26 +47,61 @@ npm run watch
 
 ---
 
-## 📦 Empaquetado (Generar .vsix)
-
-Para generar el archivo instalable que se puede compartir (`.vsix`), utiliza el script de PowerShell optimizado:
-
-```powershell
-.\scripts\package.ps1
-```
-
-- **¿Qué hace este script?**: Limpia compilaciones anteriores, instala dependencias limpias, compila el código y empaqueta todo.
-- **¿Donde queda el instalable?**: El archivo final se genera en la carpeta `/dist/` con el nombre `spring-http-generator-0.0.1.vsix`.
-
----
-
 ## 🧪 Pruebas en Vivo
 
 Para probar tus cambios sin empaquetar:
 1. Abre el proyecto en VS Code.
 2. Presiona `F5`.
-3. Se abrirá una nueva ventana de VS Code ("Extension Development Host") con tu versión de la extensión cargada para probarla en tiempo real.
+3. Se abrirá una nueva ventana ("Extension Development Host") con la extensión cargada.
 
 ---
-**Documentación para desarrolladores de PablitoTech**
-code --install-extension "d:\vscode_http_extencion\spring-http-generator-0.0.1.vsix" --force
+
+## 📦 Empaquetado (Generar .vsix)
+
+Para generar el archivo instalable (`.vsix`), utiliza el comando correspondiente a tu sistema operativo. El archivo se generará en la carpeta `dist/`.
+
+### Windows (PowerShell)
+El script `package.ps1` se encarga de limpiar, instalar dependencias y compilar todo automáticamente.
+```powershell
+.\scripts\package.ps1
+```
+
+### Mac / Linux
+Puedes usar `npm` y `vsce` directamente desde la terminal:
+```bash
+# 1. Instalar dependencias (si no lo has hecho)
+npm install
+
+# 2. Empaquetar (esto compila automáticamente)
+npx vsce package --out ./dist
+```
+
+> **Nota**: El archivo generado tendrá un nombre similar a `spring-http-generator-0.0.1.vsix` dentro de la carpeta `dist`.
+
+---
+
+## 💿 Instalación Manual
+
+Una vez generado el archivo `.vsix`, puedes instalarlo en tu editor preferido usando la línea de comandos. Asegúrate de estar en la raíz del proyecto.
+
+### Visual Studio Code
+**Windows:**
+```powershell
+code --install-extension "dist\spring-http-generator-0.0.1.vsix" --force
+```
+
+**Mac / Linux:**
+```bash
+code --install-extension dist/spring-http-generator-0.0.1.vsix --force
+```
+
+### Cursor
+**Windows:**
+```powershell
+cursor --install-extension "dist\spring-http-generator-0.0.1.vsix" --force
+```
+
+**Mac / Linux:**
+```bash
+cursor --install-extension dist/spring-http-generator-0.0.1.vsix --force
+```
