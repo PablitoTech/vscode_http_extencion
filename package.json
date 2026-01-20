@@ -2,7 +2,7 @@
   "name": "spring-http-generator",
   "displayName": "Spring HTTP Generator (0.0.1 Beta)",
   "description": "🚀 Generación automática de archivos .http para Spring Boot. Acelera tus pruebas de API con un solo click.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publisher": "PablitoTech",
   "icon": "resources/logo.png",
   "engines": {
@@ -25,7 +25,6 @@
     "api testing"
   ],
   "activationEvents": [
-    "*",
     "onLanguage:java"
   ],
   "main": "./out/extension.js",

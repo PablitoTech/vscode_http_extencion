@@ -2,7 +2,7 @@
   <img src="resources/architecture.png" width="600" alt="Spring HTTP Generator Architecture">
 </p>
 
-# 🚀 Spring HTTP Generator (0.0.1 Beta)
+# 🚀 Spring HTTP Generator (0.0.2)
 
 **¡Bienvenidos a la nueva era de las pruebas de APIs en Spring Boot!**
 
@@ -16,8 +16,9 @@ En el desarrollo moderno, cada segundo cuenta. Esta extensión nace para elimina
 
 - **Detección Automática**: Encuentra tus controladores sin que muevas un dedo.
 - **Análisis de DTOs Profundo**: Genera objetos JSON reales basados en tus clases Java.
+- **Soporte Swagger/OpenAPI**: Lee automáticamente ejemplos de `@Schema(example = "...")` para poblar tus JSONs con datos útiles.
 - **Seguridad Nativa**: ¿Usas `@PreAuthorize` o `@Secured`? Nosotros también. Las cabeceras de autorización se añaden solas.
-- **Beta 0.0.1**: Estás usando la versión pionera, optimizada para rendimiento y simplicidad.
+- **Versión 0.0.2**: Optimizada con nuevo motor de análisis de metadatos.
 
 ---
 

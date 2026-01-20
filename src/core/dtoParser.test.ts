@@ -1,4 +1,15 @@
-import { DtoParser } from '../../core/dtoParser';
+// Mock Logger
+jest.mock('../utils/logUtils', () => ({
+    Logger: {
+        debug: jest.fn(),
+        error: jest.fn(),
+        warn: jest.fn(),
+        info: jest.fn(),
+        time: jest.fn(() => jest.fn())
+    }
+}));
+
+import { DtoParser } from './dtoParser';
 
 describe('DtoParser', () => {
     describe('parseDtoClass', () => {

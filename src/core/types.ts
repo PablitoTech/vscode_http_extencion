@@ -6,6 +6,7 @@ export interface DtoField {
     type: string;
     required: boolean;
     description?: string;
+    exampleValue?: string;
 }
 
 /**

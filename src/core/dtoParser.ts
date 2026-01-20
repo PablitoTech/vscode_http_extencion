@@ -31,7 +31,7 @@ export class DtoParser {
     }
 
     /**
-     * Extract fields from DTO content using regex (simpler approach for MVP)
+     * Extract fields from DTO content using regex
      */
     private static extractFields(content: string): DtoField[] {
         const fields: DtoField[] = [];
@@ -45,22 +45,67 @@ export class DtoParser {
             const name = match[2].trim();
 
             // Skip static fields
-            if (content.substring(Math.max(0, match.index - 50), match.index).includes('static')) {
+            if (content.substring(Math.max(0, match.index - 500), match.index).includes('static')) {
                 continue;
             }
 
-            // Check if field is required (has @NotNull, @NotEmpty, @NotBlank)
-            const fieldContext = content.substring(Math.max(0, match.index - 200), match.index);
+            // Get context (annotations above the field)
+            // Look back up to 500 chars to catch multi-line annotations
+            let fieldContext = content.substring(Math.max(0, match.index - 500), match.index);
+
+            // Optimization: Only look at content after the last semicolon (end of previous field)
+            // This prevents grabbing annotations from the previous field
+            const lastSemicolon = fieldContext.lastIndexOf(';');
+            if (lastSemicolon !== -1) {
+                fieldContext = fieldContext.substring(lastSemicolon + 1);
+            }
+
             const required = this.isFieldRequired(fieldContext);
+            const exampleValue = this.extractSwaggerExample(fieldContext);
+            const description = this.extractSwaggerDescription(fieldContext);
 
             fields.push({
                 name,
                 type,
-                required
+                required,
+                exampleValue,
+                description
             });
         }
 
         return fields;
+    }
+
+    /**
+     * Extract example value from @Schema annotation
+     */
+    private static extractSwaggerExample(context: string): string | undefined {
+        // Look for @Schema(... example = "value" ...)
+        const schemaMatch = /@Schema\s*\(([^)]*)\)/.exec(context);
+        if (!schemaMatch) return undefined;
+
+        const content = schemaMatch[1];
+
+        // Try to match example = "value"
+        const exampleMatch = /example\s*=\s*"([^"]*)"/.exec(content);
+        if (exampleMatch) return exampleMatch[1];
+
+        // Try to match example = number/boolean
+        const examplePrimitiveMatch = /example\s*=\s*([0-9.]+|true|false)/.exec(content);
+        if (examplePrimitiveMatch) return examplePrimitiveMatch[1];
+
+        return undefined;
+    }
+
+    /**
+     * Extract description from @Schema annotation
+     */
+    private static extractSwaggerDescription(context: string): string | undefined {
+        const schemaMatch = /@Schema\s*\(([^)]*)\)/.exec(context);
+        if (!schemaMatch) return undefined;
+
+        const descriptionMatch = /description\s*=\s*"([^"]*)"/.exec(schemaMatch[1]);
+        return descriptionMatch ? descriptionMatch[1] : undefined;
     }
 
     /**
@@ -79,7 +124,12 @@ export class DtoParser {
         const obj: Record<string, any> = {};
 
         for (const field of dtoInfo.fields) {
-            obj[field.name] = TypeMapper.getExampleValue(field.type);
+            // Use Swagger example if available
+            if (field.exampleValue !== undefined) {
+                obj[field.name] = this.parseExampleValue(field.exampleValue, field.type);
+            } else {
+                obj[field.name] = TypeMapper.getExampleValue(field.type);
+            }
         }
 
         return JSON.stringify(obj, null, indent);
@@ -97,5 +147,35 @@ export class DtoParser {
         }
 
         return this.generateExampleJson(dtoInfo);
+    }
+
+    /**
+     * Cast string example to correct type if possible
+     */
+    private static parseExampleValue(value: string, type: string): any {
+        const simpleType = type.split('<')[0].replace('java.lang.', '');
+
+        switch (simpleType) {
+            case 'Integer':
+            case 'int':
+            case 'Long':
+            case 'long':
+            case 'Short':
+            case 'short':
+            case 'Byte':
+            case 'byte':
+                return parseInt(value) || 0;
+            case 'Double':
+            case 'double':
+            case 'Float':
+            case 'float':
+            case 'BigDecimal':
+                return parseFloat(value) || 0.0;
+            case 'Boolean':
+            case 'boolean':
+                return value === 'true';
+            default:
+                return value;
+        }
     }
 }

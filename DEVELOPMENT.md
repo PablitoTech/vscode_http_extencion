@@ -105,11 +105,14 @@ Puedes usar `npm` y `vsce` directamente desde la terminal:
 # 1. Instalar dependencias (si no lo has hecho)
 npm install
 
-# 2. Empaquetar (esto compila automáticamente)
+# 2. Asegurar directorio de salida
+mkdir -p dist
+
+# 3. Empaquetar
 npx vsce package --out ./dist
 ```
 
-> **Nota**: El archivo generado tendrá un nombre similar a `spring-http-generator-0.0.1.vsix` dentro de la carpeta `dist`.
+> **Nota**: El archivo generado tendrá un nombre similar a `spring-http-generator-0.0.2.vsix` dentro de la carpeta `dist`.
 
 ---
 
@@ -120,21 +123,21 @@ Una vez generado el archivo `.vsix`, puedes instalarlo en tu editor preferido us
 ### Visual Studio Code
 **Windows:**
 ```powershell
-code --install-extension "dist\spring-http-generator-0.0.1.vsix" --force
+code --install-extension "dist\spring-http-generator-0.0.2.vsix" --force
 ```
 
 **Mac / Linux:**
 ```bash
-code --install-extension dist/spring-http-generator-0.0.1.vsix --force
+code --install-extension dist/spring-http-generator-0.0.2.vsix --force
 ```
 
 ### Cursor
 **Windows:**
 ```powershell
-cursor --install-extension "dist\spring-http-generator-0.0.1.vsix" --force
+cursor --install-extension "dist\spring-http-generator-0.0.2.vsix" --force
 ```
 
 **Mac / Linux:**
 ```bash
-cursor --install-extension dist/spring-http-generator-0.0.1.vsix --force
+cursor --install-extension dist/spring-http-generator-0.0.2.vsix --force
 ```
