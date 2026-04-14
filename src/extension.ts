@@ -39,6 +39,13 @@ export function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(
         vscode.commands.registerCommand(
+            'spring-http-generator.generateHttpFromFolder',
+            generateHttpFromFolderCommand
+        )
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand(
             'spring-http-generator.generateHttpFromMethod',
             generateHttpFromMethodCommand
         )
@@ -111,6 +118,69 @@ async function generateHttpFromControllerCommand(uri?: vscode.Uri) {
         const message = Logger.formatError(error);
         Logger.error(`Failed to generate HTTP from controller: ${message}`, error);
         vscode.window.showErrorMessage(`Failed to generate HTTP file: ${message}. Check 'Spring HTTP Generator' output for details.`);
+    }
+}
+
+/**
+ * Command: Generate HTTP files from all controllers inside a folder
+ */
+async function generateHttpFromFolderCommand(uri?: vscode.Uri) {
+    try {
+        Logger.info('Executing: Generate HTTP from Folder');
+
+        if (!uri) {
+            vscode.window.showWarningMessage('No folder selected');
+            return;
+        }
+
+        const controllers = await ControllerScanner.findControllersInFolder(uri);
+
+        if (controllers.length === 0) {
+            vscode.window.showWarningMessage('No Spring Boot controllers found in the selected folder');
+            return;
+        }
+
+        await vscode.window.withProgress(
+            {
+                location: vscode.ProgressLocation.Notification,
+                title: `Generating HTTP files for ${controllers.length} controller(s)...`,
+                cancellable: false
+            },
+            async progress => {
+                let generated = 0;
+                let failed = 0;
+
+                for (const controllerUri of controllers) {
+                    const fileName = path.basename(controllerUri.fsPath);
+                    progress.report({
+                        message: `Processing ${fileName} (${generated + failed + 1}/${controllers.length})`,
+                        increment: (1 / controllers.length) * 100
+                    });
+
+                    try {
+                        await generateHttpFromUri(controllerUri);
+                        generated++;
+                    } catch (err: any) {
+                        failed++;
+                        Logger.error(`Failed to process ${fileName}: ${err.message}`, err);
+                    }
+                }
+
+                if (failed === 0) {
+                    vscode.window.showInformationMessage(
+                        `Generated ${generated} HTTP file(s) from folder`
+                    );
+                } else {
+                    vscode.window.showWarningMessage(
+                        `Generated ${generated} file(s), failed ${failed}. Check 'Spring HTTP Generator' output for details.`
+                    );
+                }
+            }
+        );
+    } catch (error: any) {
+        const message = Logger.formatError(error);
+        Logger.error(`Failed to generate HTTP from folder: ${message}`, error);
+        vscode.window.showErrorMessage(`Failed to generate HTTP files: ${message}. Check 'Spring HTTP Generator' output for details.`);
     }
 }
 

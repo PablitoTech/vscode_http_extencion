@@ -21,10 +21,13 @@ export class HttpBuilder {
         try {
             const sections: string[] = [];
 
-            // Add header comment
+            // Add header comment and variables
             sections.push(`### ${controller.className}`);
             const controllerUri = vscode.Uri.file(controller.filePath);
             sections.push(`# Generated from: ${FileSystemUtils.getRelativePath(controllerUri)}`);
+            sections.push('');
+            sections.push(`@baseUrl = ${config.baseUrl}`);
+            sections.push('@token = ');
             sections.push('');
 
             // Generate request for each method
@@ -55,12 +58,12 @@ export class HttpBuilder {
         // Add comment with method name
         lines.push(`# ${method.name}`);
 
-        // Build request line
-        const url = MappingResolver.getCompleteEndpoint(config.baseUrl, controller, method);
+        // Build request line using {{baseUrl}} variable
+        const url = MappingResolver.getCompleteEndpoint('{{baseUrl}}', controller, method);
         lines.push(`${method.httpMethod} ${url}`);
 
-        // Add authorization header if needed
-        if (config.includeAuthHeader && method.requiresAuth) {
+        // Add authorization header if configured
+        if (config.includeAuthHeader) {
             lines.push('Authorization: Bearer {{token}}');
         }
 

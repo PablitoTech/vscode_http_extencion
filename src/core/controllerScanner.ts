@@ -22,6 +22,20 @@ export class ControllerScanner {
     }
 
     /**
+     * Find all controller files inside a specific folder (recursively)
+     */
+    static async findControllersInFolder(folderUri: vscode.Uri): Promise<vscode.Uri[]> {
+        const endTimer = Logger.time(`Scanning folder for controllers: ${folderUri.fsPath}`);
+        try {
+            const controllers = await FileSystemUtils.findControllerFilesInFolder(folderUri);
+            Logger.info(`Found ${controllers.length} controller(s) in folder`);
+            return controllers;
+        } finally {
+            endTimer();
+        }
+    }
+
+    /**
      * Get the currently active controller file
      */
     static getActiveController(): vscode.Uri | null {

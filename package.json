@@ -39,6 +39,10 @@
         "title": "Generar archivo .http desde Controlador"
       },
       {
+        "command": "spring-http-generator.generateHttpFromFolder",
+        "title": "Generar archivos .http desde Carpeta"
+      },
+      {
         "command": "spring-http-generator.generateHttpFromMethod",
         "title": "Generar solicitud HTTP desde Método"
       },
@@ -52,6 +56,11 @@
         {
           "when": "resourceLangId == java",
           "command": "spring-http-generator.generateHttpFromController",
+          "group": "spring-http-generator"
+        },
+        {
+          "when": "explorerResourceIsFolder",
+          "command": "spring-http-generator.generateHttpFromFolder",
           "group": "spring-http-generator"
         }
       ],
@@ -98,11 +107,14 @@
         "spring-http-generator.includeAuthHeader": {
           "type": "boolean",
           "default": true,
-          "description": "Incluir automáticamente la cabecera 'Authorization' cuando se detecten anotaciones de seguridad."
+          "description": "Incluir automáticamente la cabecera 'Authorization: Bearer {{token}}' en todas las solicitudes generadas."
         }
       }
     }
   },
+  "workspaces": [
+    "landing_vscode_http_extencion"
+  ],
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
@@ -110,7 +122,10 @@
     "pretest": "npm run compile",
     "test": "jest",
     "package": "vsce package",
-    "lint": "eslint src --ext ts"
+    "lint": "eslint src --ext ts",
+    "landing:dev": "npm run dev --workspace=landing_vscode_http_extencion",
+    "landing:build": "npm run build --workspace=landing_vscode_http_extencion",
+    "landing:db:init": "npm run db:init --workspace=landing_vscode_http_extencion"
   },
   "devDependencies": {
     "@types/jest": "^29.5.11",

@@ -4,3 +4,10 @@ coverage/
 *.vsix
 .vscode-test/
 examples/
+
+traslados/
+
+# Landing
+landing_vscode_http_extencion/.next/
+landing_vscode_http_extencion/.env.local
+landing_vscode_http_extencion/.env*.local

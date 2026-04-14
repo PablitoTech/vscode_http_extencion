@@ -120,24 +120,82 @@ npx vsce package --out ./dist
 
 Una vez generado el archivo `.vsix`, puedes instalarlo en tu editor preferido usando la línea de comandos. Asegúrate de estar en la raíz del proyecto.
 
+---
+
 ### Visual Studio Code
+
 **Windows:**
 ```powershell
 code --install-extension "dist\spring-http-generator-0.0.2.vsix" --force
 ```
-
-**Mac / Linux:**
+**Mac:**
+```bash
+code --install-extension dist/spring-http-generator-0.0.2.vsix --force
+```
+**Linux:**
 ```bash
 code --install-extension dist/spring-http-generator-0.0.2.vsix --force
 ```
 
+> [!TIP]
+> Si `code` no se reconoce, abre VS Code → `Cmd/Ctrl+Shift+P` → **"Shell Command: Install 'code' command in PATH"**.
+
+---
+
 ### Cursor
+
 **Windows:**
 ```powershell
 cursor --install-extension "dist\spring-http-generator-0.0.2.vsix" --force
 ```
-
-**Mac / Linux:**
+**Mac:**
 ```bash
 cursor --install-extension dist/spring-http-generator-0.0.2.vsix --force
 ```
+**Linux:**
+```bash
+cursor --install-extension dist/spring-http-generator-0.0.2.vsix --force
+```
+
+> [!TIP]
+> Si `cursor` no se reconoce, abre Cursor → `Cmd/Ctrl+Shift+P` → **"Shell Command: Install 'cursor' command in PATH"**.
+
+---
+
+### Antigravity
+
+**Windows:**
+```powershell
+antigravity --install-extension "dist\spring-http-generator-0.0.2.vsix" --force
+```
+**Mac:**
+```bash
+antigravity --install-extension dist/spring-http-generator-0.0.2.vsix --force
+```
+**Linux:**
+```bash
+antigravity --install-extension dist/spring-http-generator-0.0.2.vsix --force
+```
+
+> [!TIP]
+> Si `antigravity` no se reconoce, abre Antigravity → `Cmd/Ctrl+Shift+P` → **"Shell Command: Install 'antigravity' command in PATH"**.
+
+---
+
+### Kiro
+
+**Windows:**
+```powershell
+kiro --install-extension "dist\spring-http-generator-0.0.2.vsix" --force
+```
+**Mac:**
+```bash
+kiro --install-extension dist/spring-http-generator-0.0.2.vsix --force
+```
+**Linux:**
+```bash
+kiro --install-extension dist/spring-http-generator-0.0.2.vsix --force
+```
+
+> [!TIP]
+> Si `kiro` no se reconoce, abre Kiro → `Cmd/Ctrl+Shift+P` → **"Shell Command: Install 'kiro' command in PATH"**.

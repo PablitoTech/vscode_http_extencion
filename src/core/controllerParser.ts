@@ -94,6 +94,53 @@ export class ControllerParser {
     }
 
     /**
+     * Strip annotation arguments to simplify method signature matching.
+     * e.g. @Parameter(description = "...", example = "123") becomes @Parameter
+     */
+    private static stripAnnotationArgs(text: string): string {
+        let result = '';
+        let i = 0;
+        while (i < text.length) {
+            if (text[i] === '@') {
+                result += text[i++];
+                // Copy annotation name
+                while (i < text.length && /[A-Za-z0-9_]/.test(text[i])) {
+                    result += text[i++];
+                }
+                // Skip (…) arguments entirely
+                if (i < text.length && text[i] === '(') {
+                    let depth = 1;
+                    i++;
+                    while (i < text.length && depth > 0) {
+                        if (text[i] === '(') depth++;
+                        else if (text[i] === ')') depth--;
+                        i++;
+                    }
+                }
+            } else {
+                result += text[i++];
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Extract content between the opening paren at openParenIndex and its matching closing paren.
+     */
+    private static extractBetweenParens(text: string, openParenIndex: number): string | null {
+        if (text[openParenIndex] !== '(') return null;
+        let depth = 1;
+        let i = openParenIndex + 1;
+        while (i < text.length && depth > 0) {
+            if (text[i] === '(') depth++;
+            else if (text[i] === ')') depth--;
+            i++;
+        }
+        if (depth !== 0) return null;
+        return text.substring(openParenIndex + 1, i - 1);
+    }
+
+    /**
      * Extract detailed information for a single method
      */
     private static extractMethodInfo(
@@ -106,12 +153,22 @@ export class ControllerParser {
         const { path, method } = this.extractMappingInfo(content, annotationIndex, hintMethod);
 
         const afterAnnotation = content.substring(annotationIndex);
-        const methodMatch = afterAnnotation.match(/(?:public|protected|private)?\s+(?:static\s+|final\s+|synchronized\s+|abstract\s+|native\s+)*([A-Za-z0-9<>?,\.[\]\s]+?)\s+([a-zA-Z0-9_]+)\s*\(([^)]*)\)(?:\s*throws\s+[^{]+)?/);
+
+        // Strip annotation arguments so nested parens don't confuse the method-signature regex
+        const stripped = this.stripAnnotationArgs(afterAnnotation);
+        const methodMatch = stripped.match(/(?:public|protected|private)?\s+(?:static\s+|final\s+|synchronized\s+|abstract\s+|native\s+)*([A-Za-z0-9<>?,\.[\]\s]+?)\s+([a-zA-Z0-9_]+)\s*\(/);
 
         if (!methodMatch) return null;
 
         const methodName = methodMatch[2].trim();
-        const paramsString = methodMatch[3];
+
+        // Find methodName( in the original content and depth-track to get the real params string
+        const methodCallPattern = new RegExp(`\\b${methodName}\\s*\\(`);
+        const methodCallMatch = afterAnnotation.match(methodCallPattern);
+        if (!methodCallMatch) return null;
+        const openParenIndex = (methodCallMatch.index ?? 0) + methodCallMatch[0].length - 1;
+        const paramsString = this.extractBetweenParens(afterAnnotation, openParenIndex) ?? '';
+
         Logger.debug(`Extracted method ${methodName} with params: ${paramsString}`);
         const parameters = this.parseParameters(paramsString);
 
@@ -196,6 +253,10 @@ export class ControllerParser {
         else if (param.includes('@RequestParam')) annotation = 'RequestParam';
         else if (param.includes('@RequestHeader')) annotation = 'RequestHeader';
 
+        // Extract example value from @Parameter(example = "...")
+        const exampleMatch = param.match(/@Parameter\s*\([^)]*\bexample\s*=\s*["']([^"']+)["']/);
+        const exampleValue = exampleMatch ? exampleMatch[1] : undefined;
+
         const cleanParam = param.replace(/@[A-Za-z]+\s*(\([^)]*\))?/g, '').trim();
         const parts = cleanParam.split(/\s+/);
 
@@ -208,7 +269,8 @@ export class ControllerParser {
             name,
             type,
             annotation,
-            required: param.includes('required = true') || annotation === 'RequestBody'
+            required: param.includes('required = true') || annotation === 'RequestBody',
+            exampleValue
         };
     }
 

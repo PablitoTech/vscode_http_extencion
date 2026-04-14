@@ -54,19 +54,38 @@ class SpringHttpGenerator:
                     method_path = match.group(1)
                     actual_method = http_method
 
-                # Find method name (very basic)
-                after_match = content[match.end():match.end()+200]
+                # Look ahead to capture the method signature (up to 600 chars)
+                after_match = content[match.end():match.end()+600]
                 method_name_match = re.search(r'([A-Za-z0-9_]+)\s*\(', after_match)
                 method_name = method_name_match.group(1) if method_name_match else "unknown"
 
                 # Check for RequestBody
                 has_body = "@RequestBody" in after_match
 
+                # Extract @RequestParam parameters with example values
+                query_params = []
+                # Match each @Parameter(...) @RequestParam(...) pair
+                param_pattern = re.compile(
+                    r'@Parameter\s*\([^)]*\bexample\s*=\s*["\']([^"\']+)["\'][^)]*\)\s*@RequestParam\s*(?:\([^)]*\))?\s*\w+\s+(\w+)'
+                    r'|@RequestParam\s*(?:\(\s*(?:name|value)\s*=\s*["\']([^"\']+)["\']\s*(?:,[^)]*)?\)|(?:\([^)]*\))?)\s*\w+\s+(\w+)'
+                )
+                # Simpler: find all @RequestParam in after_match and pair with @Parameter example
+                rp_pattern = re.compile(
+                    r'(?:@Parameter\s*\([^)]*\bexample\s*=\s*["\']([^"\']+)["\'][^)]*\)\s*)?'
+                    r'@RequestParam\s*(?:\(\s*(?:(?:name|value)\s*=\s*["\']([^"\']+)["\']|[^)]*)\s*\))?\s*\w+\s+(\w+)'
+                )
+                for rp in rp_pattern.finditer(after_match):
+                    example_val = rp.group(1) or 'value'
+                    param_name = rp.group(2) or rp.group(3)
+                    if param_name and param_name not in ('int', 'long', 'String', 'boolean', 'page', 'size'):
+                        query_params.append({"name": param_name, "example": example_val})
+
                 methods.append({
                     "name": method_name,
                     "method": actual_method,
                     "path": method_path,
-                    "has_body": has_body
+                    "has_body": has_body,
+                    "query_params": query_params
                 })
 
         return {
@@ -79,20 +98,32 @@ class SpringHttpGenerator:
     def generate_http(self, controller):
         lines = []
         lines.append(f"### {controller['class_name']}")
-        lines.append(f"# File: {controller['file_path']}")
+        lines.append(f"# Generated from: {controller['file_path']}")
+        lines.append("")
+        lines.append(f"@baseUrl = {self.base_url}")
+        lines.append("@token = ")
         lines.append("")
 
         for m in controller['methods']:
-            full_path = f"/{controller['base_path'].strip('/')}/{m['path'].strip('/')}".replace("//", "/")
+            base = controller['base_path'].strip('/')
+            method_path = m['path'].strip('/')
+            full_path = f"/{base}/{method_path}".replace("//", "/") if method_path else f"/{base}"
+
+            # Build query string from @RequestParam with example values
+            query_string = ""
+            if m.get('query_params'):
+                qs_parts = [f"{p['name']}={p['example']}" for p in m['query_params']]
+                query_string = "?" + "&".join(qs_parts)
+
             lines.append(f"# {m['name']}")
-            lines.append(f"{m['method']} {self.base_url}{full_path}")
+            lines.append(f"{m['method']} {{{{baseUrl}}}}{full_path}{query_string}")
             lines.append("Authorization: Bearer {{token}}")
-            
+
             if m['has_body']:
                 lines.append("Content-Type: application/json")
                 lines.append("")
-                lines.append("{}") # Placeholder body
-            
+                lines.append("{}")
+
             lines.append("")
             lines.append("###")
             lines.append("")

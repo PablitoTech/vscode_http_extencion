@@ -26,6 +26,7 @@ export interface MethodParameter {
     annotation: 'RequestBody' | 'PathVariable' | 'RequestParam' | 'RequestHeader' | null;
     required: boolean;
     defaultValue?: string;
+    exampleValue?: string;
 }
 
 /**

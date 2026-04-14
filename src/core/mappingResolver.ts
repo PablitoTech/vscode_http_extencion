@@ -65,35 +65,39 @@ export class MappingResolver {
     }
 
     /**
-     * Build query string from request parameters
+     * Build query string from request parameters using example values
      */
-    static buildQueryString(params: { name: string; required: boolean }[]): string {
+    static buildQueryString(params: { name: string; required: boolean; exampleValue?: string; defaultValue?: string }[]): string {
         if (params.length === 0) {
             return '';
         }
 
-        const queryParams = params.map(p => `${p.name}=${p.required ? 'value' : ''}`);
+        const queryParams = params.map(p => {
+            const value = p.exampleValue ?? p.defaultValue ?? 'value';
+            return `${p.name}=${value}`;
+        });
         return '?' + queryParams.join('&');
     }
 
     /**
-     * Get complete endpoint URL with all components
+     * Get complete endpoint URL with all components.
+     * Pass '{{baseUrl}}' as baseUrl to generate variable-based URLs for .http files.
      */
     static getCompleteEndpoint(
         baseUrl: string,
         controller: ControllerInfo,
         method: EndpointMethod
     ): string {
-        const url = this.resolveUrl(baseUrl, controller.basePath, method.path);
-        const formattedUrl = this.formatPathVariables(url);
+        // Apply formatPathVariables only to the path (not the baseUrl variable)
+        // to avoid turning {{baseUrl}} into {{{baseUrl}}}
+        const cleanBaseUrl = baseUrl.replace(/\/$/, '');
+        const fullPath = this.combinePaths(controller.basePath, method.path);
+        const formattedPath = this.formatPathVariables(fullPath);
 
         // Add query parameters if any
         const requestParams = method.parameters.filter(p => p.annotation === 'RequestParam');
-        if (requestParams.length > 0) {
-            const queryString = this.buildQueryString(requestParams);
-            return formattedUrl + queryString;
-        }
+        const queryString = requestParams.length > 0 ? this.buildQueryString(requestParams) : '';
 
-        return formattedUrl;
+        return cleanBaseUrl + formattedPath + queryString;
     }
 }

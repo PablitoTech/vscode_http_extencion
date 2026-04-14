@@ -43,6 +43,31 @@ export class FileSystemUtils {
     }
 
     /**
+     * Find all Java controller files inside a specific folder (recursively)
+     */
+    static async findControllerFilesInFolder(folderUri: vscode.Uri): Promise<vscode.Uri[]> {
+        const folderPath = folderUri.fsPath;
+        const allJavaFiles = await this.findFiles('**/*.java', '**/node_modules/**');
+
+        // Filter to only files inside the selected folder
+        const folderFiles = allJavaFiles.filter(uri =>
+            uri.fsPath.startsWith(folderPath + path.sep) || uri.fsPath.startsWith(folderPath + '/')
+        );
+
+        const controllerFiles: vscode.Uri[] = [];
+
+        for (const file of folderFiles) {
+            const content = await this.readFile(file);
+            if (this.isControllerFile(content)) {
+                controllerFiles.push(file);
+            }
+        }
+
+        Logger.info(`Found ${controllerFiles.length} controller files in folder: ${folderPath}`);
+        return controllerFiles;
+    }
+
+    /**
      * Check if a file contains controller annotations
      */
     private static isControllerFile(content: string): boolean {
