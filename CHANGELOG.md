@@ -2,6 +2,21 @@
 
 Todas las actualizaciones notables de **Spring HTTP Generator** serán documentadas en este archivo.
 
+## [0.0.3] - 2026-04-14
+
+### 🚀 Nuevas Funcionalidades
+- **Generación por carpeta**: Nuevo comando para generar archivos `.http` desde todos los controladores Spring Boot dentro de una carpeta seleccionada (recursivamente).
+- **Variables en archivos HTTP**: Los archivos generados ahora incluyen variables `@baseUrl` y `@token` al inicio, con URLs usando `{{baseUrl}}` en lugar de la URL hardcodeada.
+- **Soporte para `@Parameter(example)`**: Se leen los valores de `example` en anotaciones `@Parameter` de los parámetros del método para generar query strings más realistas.
+
+### 🐛 Correcciones
+- **Parser de firmas de método**: Se corrigió un bug donde anotaciones con paréntesis anidados (ej. `@Parameter(description = "...", example = "...")`) rompían la detección de la firma del método.
+- **Contexto de anotaciones por campo**: Se mejoró el análisis de contexto para evitar que anotaciones de campos anteriores contaminen la lectura del campo actual.
+
+### 🔧 Mejoras
+- **Query string con valores reales**: Los `@RequestParam` ahora usan el `exampleValue` o `defaultValue` cuando están disponibles, en lugar del placeholder genérico `value`.
+- **Cabecera de autorización**: Se simplificó la lógica — el header `Authorization: Bearer {{token}}` se incluye cuando `includeAuthHeader` está activo, sin requerir que el endpoint tenga `requiresAuth`.
+
 ## [0.0.2] - 2026-01-19
 
 ### 🚀 Nuevas Funcionalidades
